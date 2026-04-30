@@ -3,11 +3,15 @@ package ch.samira.tesan.kitcord.chat;
 import ch.samira.tesan.kitcord.message.Message;
 import ch.samira.tesan.kitcord.user.User;
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+@Data
 @Entity
+@Table(name = "chats")
 public class Chat {
 
     @Id
