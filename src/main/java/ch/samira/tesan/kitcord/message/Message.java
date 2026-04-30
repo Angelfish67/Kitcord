@@ -1,5 +1,7 @@
-package com.focuschat.entity;
+package ch.samira.tesan.kitcord.message;
 
+import ch.samira.tesan.kitcord.chat.Chat;
+import ch.samira.tesan.kitcord.user.User;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
