@@ -3,15 +3,14 @@ package ch.samira.tesan.kitcord.user;
 import ch.samira.tesan.kitcord.chat.Chat;
 import ch.samira.tesan.kitcord.message.Message;
 import ch.samira.tesan.kitcord.user.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
 @Entity
 @Table(name = "users")
 public class User {
@@ -29,9 +28,11 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "users")
     private Set<Chat> chats = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
     private Set<Message> messages = new HashSet<>();
 
@@ -47,36 +48,36 @@ public class User {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public @Size(max = 100) @NotEmpty String getUsername() {
+    public String getUsername() {
         return username;
-    }
-
-    public void setUsername(@Size(max = 100) @NotEmpty String username) {
-        this.username = username;
     }
 
     public Role getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
     public Set<Chat> getChats() {
         return chats;
     }
 
-    public void setChats(Set<Chat> chats) {
-        this.chats = chats;
-    }
-
     public Set<Message> getMessages() {
         return messages;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public void setChats(Set<Chat> chats) {
+        this.chats = chats;
     }
 
     public void setMessages(Set<Message> messages) {

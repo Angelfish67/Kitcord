@@ -15,23 +15,26 @@ public class ChatController {
     }
 
     @GetMapping
-    public List<Chat> getChats() {
-        return chatService.getChats();
+    public List<ChatResponse> getChats() {
+        return chatService.getChats()
+                .stream()
+                .map(ChatResponse::new)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public Chat getChatById(@PathVariable Long id) {
-        return chatService.getChatById(id);
+    public ChatResponse getChatById(@PathVariable Long id) {
+        return new ChatResponse(chatService.getChatById(id));
     }
 
     @PostMapping
-    public Chat createChat(@RequestBody CreateChatRequest request) {
-        return chatService.createChat(request);
+    public ChatResponse createChat(@RequestBody CreateChatRequest request) {
+        return new ChatResponse(chatService.createChat(request));
     }
 
     @PutMapping("/{id}")
-    public Chat updateChat(@PathVariable Long id, @RequestBody Chat chat) {
-        return chatService.updateChat(id, chat);
+    public ChatResponse updateChat(@PathVariable Long id, @RequestBody Chat chat) {
+        return new ChatResponse(chatService.updateChat(id, chat));
     }
 
     @DeleteMapping("/{id}")
@@ -40,12 +43,12 @@ public class ChatController {
     }
 
     @PostMapping("/{id}/users/{userId}")
-    public Chat addUserToChat(@PathVariable Long id, @PathVariable Long userId) {
-        return chatService.addUserToChat(id, userId);
+    public ChatResponse addUserToChat(@PathVariable Long id, @PathVariable Long userId) {
+        return new ChatResponse(chatService.addUserToChat(id, userId));
     }
 
     @DeleteMapping("/{id}/users/{userId}")
-    public Chat removeUserFromChat(@PathVariable Long id, @PathVariable Long userId) {
-        return chatService.removeUserFromChat(id, userId);
+    public ChatResponse removeUserFromChat(@PathVariable Long id, @PathVariable Long userId) {
+        return new ChatResponse(chatService.removeUserFromChat(id, userId));
     }
 }

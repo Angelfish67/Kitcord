@@ -8,9 +8,6 @@ public class CreateChatRequest {
     private ChatType chatType;
     private List<Long> userIds;
 
-    public CreateChatRequest() {
-    }
-
     public String getName() {
         return name;
     }

@@ -14,6 +14,6 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/ILV
+          issuer-uri: http://localhost:8080/realms/kitcord
 app:
-  name: focusdesk
+  name: kitcord

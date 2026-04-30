@@ -2,6 +2,7 @@ package ch.samira.tesan.kitcord.chat;
 
 import ch.samira.tesan.kitcord.user.User;
 import ch.samira.tesan.kitcord.user.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,28 +30,33 @@ public class ChatService {
                 .orElseThrow(() -> new RuntimeException("Chat not found"));
     }
 
+    @Transactional
     public Chat createChat(CreateChatRequest request) {
+        if (request.getChatType() == null) {
+            throw new RuntimeException("Chat type is required");
+        }
+
         if (request.getUserIds() == null || request.getUserIds().isEmpty()) {
-            throw new RuntimeException("At least one user is required");
+            throw new RuntimeException("Users are required");
         }
 
-        if (request.getChatType() == ChatType.DIRECT && request.getUserIds().size() != 2) {
-            throw new RuntimeException("Direct chat must have exactly 2 users");
-        }
+        List<User> foundUsers = userRepository.findAllById(request.getUserIds());
 
-        Chat chat = new Chat();
-        chat.setId(null);
-        chat.setName(request.getName());
-        chat.setChatType(request.getChatType());
-        chat.setCreatedAt(LocalDateTime.now());
-
-        Set<User> users = new HashSet<>(userRepository.findAllById(request.getUserIds()));
-
-        if (users.size() != request.getUserIds().size()) {
+        if (foundUsers.size() != request.getUserIds().size()) {
             throw new RuntimeException("One or more users not found");
         }
 
+        if (request.getChatType() == ChatType.DIRECT && foundUsers.size() != 2) {
+            throw new RuntimeException("Direct chat must have exactly 2 users");
+        }
+
+        Set<User> users = new HashSet<>(foundUsers);
+
+        Chat chat = new Chat();
+        chat.setName(request.getName());
+        chat.setChatType(request.getChatType());
         chat.setUsers(users);
+        chat.setCreatedAt(LocalDateTime.now());
 
         return chatRepository.save(chat);
     }
@@ -65,12 +71,12 @@ public class ChatService {
     }
 
     public void deleteChat(Long id) {
-        Chat chat = getChatById(id);
-        chatRepository.delete(chat);
+        chatRepository.deleteById(id);
     }
 
-    public Chat addUserToChat(Long chatId, Long userId) {
-        Chat chat = getChatById(chatId);
+    @Transactional
+    public Chat addUserToChat(Long id, Long userId) {
+        Chat chat = getChatById(id);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -80,8 +86,9 @@ public class ChatService {
         return chatRepository.save(chat);
     }
 
-    public Chat removeUserFromChat(Long chatId, Long userId) {
-        Chat chat = getChatById(chatId);
+    @Transactional
+    public Chat removeUserFromChat(Long id, Long userId) {
+        Chat chat = getChatById(id);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));

@@ -2,14 +2,13 @@ package ch.samira.tesan.kitcord.chat;
 
 import ch.samira.tesan.kitcord.message.Message;
 import ch.samira.tesan.kitcord.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
 @Entity
 @Table(name = "chats")
 public class Chat {
@@ -36,6 +35,7 @@ public class Chat {
     )
     private Set<User> users = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Message> messages = new HashSet<>();
 
@@ -50,51 +50,53 @@ public class Chat {
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public ChatType getChatType() {
         return chatType;
     }
 
-    public void setChatType(ChatType chatType) {
-        this.chatType = chatType;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public Set<User> getUsers() {
         return users;
     }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
     public Set<Message> getMessages() {
         return messages;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setChatType(ChatType chatType) {
+        this.chatType = chatType;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 
     public void setMessages(Set<Message> messages) {
@@ -119,4 +121,3 @@ public class Chat {
         message.setChat(null);
     }
 }
-

@@ -2,12 +2,11 @@ package ch.samira.tesan.kitcord.message;
 
 import ch.samira.tesan.kitcord.chat.Chat;
 import ch.samira.tesan.kitcord.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Data
 @Entity
 @Table(name = "messages")
 public class Message {
@@ -24,6 +23,7 @@ public class Message {
 
     private LocalDateTime editedAt;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
@@ -44,7 +44,9 @@ public class Message {
 
     @PrePersist
     protected void onCreate() {
-        this.sentAt = LocalDateTime.now();
+        if (this.sentAt == null) {
+            this.sentAt = LocalDateTime.now();
+        }
     }
 
     @PreUpdate
@@ -56,44 +58,44 @@ public class Message {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getContent() {
         return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
     }
 
     public LocalDateTime getSentAt() {
         return sentAt;
     }
 
-    public void setSentAt(LocalDateTime sentAt) {
-        this.sentAt = sentAt;
-    }
-
     public LocalDateTime getEditedAt() {
         return editedAt;
-    }
-
-    public void setEditedAt(LocalDateTime editedAt) {
-        this.editedAt = editedAt;
     }
 
     public Chat getChat() {
         return chat;
     }
 
-    public void setChat(Chat chat) {
-        this.chat = chat;
-    }
-
     public User getSender() {
         return sender;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setSentAt(LocalDateTime sentAt) {
+        this.sentAt = sentAt;
+    }
+
+    public void setEditedAt(LocalDateTime editedAt) {
+        this.editedAt = editedAt;
+    }
+
+    public void setChat(Chat chat) {
+        this.chat = chat;
     }
 
     public void setSender(User sender) {
