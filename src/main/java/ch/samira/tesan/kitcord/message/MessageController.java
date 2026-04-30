@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/messages")
 public class MessageController {
 
     private final MessageService messageService;
@@ -13,27 +14,27 @@ public class MessageController {
         this.messageService = messageService;
     }
 
-    @GetMapping("/chats/{chatId}/messages")
-    public List<Message> getMessagesByChat(@PathVariable Long chatId) {
-        return messageService.getMessagesByChat(chatId);
+    @GetMapping
+    public List<Message> getMessages() {
+        return messageService.getMessages();
     }
 
-    @GetMapping("/messages/{id}")
+    @GetMapping("/{id}")
     public Message getMessageById(@PathVariable Long id) {
         return messageService.getMessageById(id);
     }
 
-    @PostMapping("/chats/{chatId}/messages")
-    public Message sendMessage(@PathVariable Long chatId, @RequestBody Message message) {
-        return messageService.sendMessage(chatId, message);
+    @PostMapping
+    public Message sendMessage(@RequestBody CreateMessageRequest request) {
+        return messageService.sendMessage(request);
     }
 
-    @PutMapping("/messages/{id}")
+    @PutMapping("/{id}")
     public Message updateMessage(@PathVariable Long id, @RequestBody Message message) {
         return messageService.updateMessage(id, message);
     }
 
-    @DeleteMapping("/messages/{id}")
+    @DeleteMapping("/{id}")
     public void deleteMessage(@PathVariable Long id) {
         messageService.deleteMessage(id);
     }
