@@ -14,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(
-        name = "Users",
+        name = "UserController",
         description = "REST controller for managing users"
 )
 @RestController

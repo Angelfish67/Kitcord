@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(
-        name = "Chats",
+        name = "ChatController",
         description = "REST controller for managing direct and group chats"
 )
 @SecurityRequirement(name = "bearerAuth")

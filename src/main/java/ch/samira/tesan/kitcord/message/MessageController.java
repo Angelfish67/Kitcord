@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(
-        name = "Messages",
+        name = "MessageController",
         description = "REST controller for managing chat messages"
 )
 @RestController
