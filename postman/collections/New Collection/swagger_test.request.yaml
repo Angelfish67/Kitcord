@@ -1,0 +1,5 @@
+$kind: http-request
+name: swagger_test
+url: http://localhost:9090/swagger-ui/index.html
+method: GET
+order: 4496374972590492

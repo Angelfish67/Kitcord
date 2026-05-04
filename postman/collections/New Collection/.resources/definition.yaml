@@ -4,50 +4,56 @@ variables:
   access_token: ""
 scripts:
   - type: http:beforeRequest
-    code: "pm.sendRequest({\r
+    code: "if (!pm.collectionVariables.get(\"access_token\")) {\r
 
-      \    url: 'http://localhost:8080/realms/kitcord/protocol/openid-connect/token?grant_type=password&client_id=kitcord&username=admin&password=0210',\r
+      \    pm.sendRequest({\r
 
-      \    method: 'POST'\r
+      \        url: \"http://localhost:8080/realms/kitcord/protocol/openid-connect/token\",\r
 
-      }, function (err, res) {\r
+      \        method: \"POST\",\r
 
-      \    if (err) {\r
+      \        header: {\r
 
-      \        console.log(err);\r
+      \            \"Content-Type\": \"application/x-www-form-urlencoded\"\r
 
-      \        return;\r
+      \        },\r
 
-      \    }\r
+      \        body: {\r
 
-      \r
+      \            mode: \"urlencoded\",\r
 
-      \    const json = res.json();\r
+      \            urlencoded: [\r
 
-      \    const token = json.access_token;\r
+      \                { key: \"client_id\", value: \"kitcord\" },\r
 
-      \r
+      \                { key: \"grant_type\", value: \"password\" },\r
 
-      \    pm.collectionVariables.set(\"access_token\", token);\r
+      \                { key: \"username\", value: \"admin\" },\r
 
-      \r
+      \                { key: \"password\", value: \"admin\" }\r
 
-      \    pm.request.headers.upsert({\r
+      \            ]\r
 
-      \        key: \"Authorization\",\r
+      \        }\r
 
-      \        value: \"Bearer \" + token\r
+      \    }, function (err, res) {\r
+
+      \        if (!err) {\r
+
+      \            const json = res.json();\r
+
+      \            pm.collectionVariables.set(\"access_token\", json.access_token);\r
+
+      \        }\r
 
       \    });\r
 
-      \r
-
-      \    console.log(\"AUTH HEADER SET\");\r
-
-      });"
+      }"
 auth:
   - id: db39c43c-4014-4a49-a243-1a0695f50a84
     type: bearer
     name: Bearer Token
     credentials:
       token: "{{access_token}}"
+    rules:
+      url: http://localhost:9090/*

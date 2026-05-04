@@ -1,0 +1,5 @@
+$kind: http-request
+name: create_user
+url: http://localhost:9090/users/me
+method: GET
+order: 3000
