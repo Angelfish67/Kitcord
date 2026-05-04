@@ -1,0 +1,25 @@
+$kind: http-request
+name: New Request
+url: http://localhost:8080/realms/kitcord/protocol/openid-connect/token?grant_type=password&client_id=kitcord&username=admin&password=0210
+method: POST
+queryParams:
+  grant_type: password
+  client_id: kitcord
+  username: admin
+  password: "0210"
+body:
+  type: urlencoded
+  content:
+    grant_type: password
+    client_id: kitcord
+    username: admin
+    password: "0210"
+scripts:
+  - type: afterResponse
+    code: "const json = pm.response.json();\r
+
+      pm.collectionVariables.set(\"access_token\", json.access_token);\r
+
+      console.log(\"TOKEN SAVED:\", json.access_token);"
+    language: text/javascript
+order: 4332007563396563

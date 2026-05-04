@@ -1,0 +1,19 @@
+pm.sendRequest({
+    url: 'http://localhost:8080/realms/kitcord/protocol/openid-connect/token',
+    method: 'POST',
+    header: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: {
+        mode: 'urlencoded',
+        urlencoded: [
+            { key: 'grant_type', value: 'password' },
+            { key: 'client_id', value: 'kitcord' },
+            { key: 'username', value: 'admin' },
+            { key: 'password', value: '0210' }
+        ]
+    }
+}, function (err, res) {
+    let json = res.json();
+    pm.environment.set("access_token", json.access_token);
+});

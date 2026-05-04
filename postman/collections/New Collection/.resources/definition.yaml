@@ -1,0 +1,53 @@
+$kind: collection
+name: New Collection
+variables:
+  access_token: ""
+scripts:
+  - type: http:beforeRequest
+    code: "pm.sendRequest({\r
+
+      \    url: 'http://localhost:8080/realms/kitcord/protocol/openid-connect/token?grant_type=password&client_id=kitcord&username=admin&password=0210',\r
+
+      \    method: 'POST'\r
+
+      }, function (err, res) {\r
+
+      \    if (err) {\r
+
+      \        console.log(err);\r
+
+      \        return;\r
+
+      \    }\r
+
+      \r
+
+      \    const json = res.json();\r
+
+      \    const token = json.access_token;\r
+
+      \r
+
+      \    pm.collectionVariables.set(\"access_token\", token);\r
+
+      \r
+
+      \    pm.request.headers.upsert({\r
+
+      \        key: \"Authorization\",\r
+
+      \        value: \"Bearer \" + token\r
+
+      \    });\r
+
+      \r
+
+      \    console.log(\"AUTH HEADER SET\");\r
+
+      });"
+auth:
+  - id: db39c43c-4014-4a49-a243-1a0695f50a84
+    type: bearer
+    name: Bearer Token
+    credentials:
+      token: "{{access_token}}"
