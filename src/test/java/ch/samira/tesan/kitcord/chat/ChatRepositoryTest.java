@@ -1,16 +1,14 @@
 package ch.samira.tesan.kitcord.chat;
 
+import ch.samira.tesan.kitcord.chat.enums.ChatType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class ChatRepositoryTest {
@@ -23,13 +21,13 @@ class ChatRepositoryTest {
         Chat chat = new Chat();
         chat.setName("General");
         chat.setChatType(ChatType.GROUP);
-        chat.setCreatedAt(LocalDateTime.now());
 
         Chat savedChat = chatRepository.save(chat);
 
         assertNotNull(savedChat.getId());
         assertEquals("General", savedChat.getName());
         assertEquals(ChatType.GROUP, savedChat.getChatType());
+        assertNotNull(savedChat.getCreatedAt());
     }
 
     @Test
@@ -37,7 +35,6 @@ class ChatRepositoryTest {
         Chat chat = new Chat();
         chat.setName("General");
         chat.setChatType(ChatType.GROUP);
-        chat.setCreatedAt(LocalDateTime.now());
 
         Chat savedChat = chatRepository.save(chat);
 
@@ -47,6 +44,7 @@ class ChatRepositoryTest {
         assertEquals(savedChat.getId(), foundChat.get().getId());
         assertEquals("General", foundChat.get().getName());
         assertEquals(ChatType.GROUP, foundChat.get().getChatType());
+        assertNotNull(foundChat.get().getCreatedAt());
     }
 
     @Test
@@ -54,12 +52,10 @@ class ChatRepositoryTest {
         Chat chat1 = new Chat();
         chat1.setName("General");
         chat1.setChatType(ChatType.GROUP);
-        chat1.setCreatedAt(LocalDateTime.now());
 
         Chat chat2 = new Chat();
         chat2.setName("Direct Chat");
         chat2.setChatType(ChatType.DIRECT);
-        chat2.setCreatedAt(LocalDateTime.now());
 
         chatRepository.save(chat1);
         chatRepository.save(chat2);
@@ -74,7 +70,6 @@ class ChatRepositoryTest {
         Chat chat = new Chat();
         chat.setName("Old Name");
         chat.setChatType(ChatType.GROUP);
-        chat.setCreatedAt(LocalDateTime.now());
 
         Chat savedChat = chatRepository.save(chat);
 
@@ -86,6 +81,7 @@ class ChatRepositoryTest {
         assertEquals(savedChat.getId(), updatedChat.getId());
         assertEquals("New Name", updatedChat.getName());
         assertEquals(ChatType.DIRECT, updatedChat.getChatType());
+        assertNotNull(updatedChat.getCreatedAt());
     }
 
     @Test
@@ -93,7 +89,6 @@ class ChatRepositoryTest {
         Chat chat = new Chat();
         chat.setName("General");
         chat.setChatType(ChatType.GROUP);
-        chat.setCreatedAt(LocalDateTime.now());
 
         Chat savedChat = chatRepository.save(chat);
 

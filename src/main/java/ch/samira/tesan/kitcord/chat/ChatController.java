@@ -115,11 +115,11 @@ public class ChatController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Updated chat data",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = Chat.class))
+                    content = @Content(schema = @Schema(implementation = UpdateChatRequest.class))
             )
-            @Valid @RequestBody Chat chat
+            @Valid @RequestBody UpdateChatRequest request
     ) {
-        return new ChatResponse(chatService.updateChat(id, chat));
+        return new ChatResponse(chatService.updateChat(id, request));
     }
 
     @Operation(

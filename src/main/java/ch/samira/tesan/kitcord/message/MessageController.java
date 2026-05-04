@@ -112,11 +112,11 @@ public class MessageController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Updated message data",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = Message.class))
+                    content = @Content(schema = @Schema(implementation = UpdateMessageRequest.class))
             )
-            @Valid @RequestBody Message message
+            @Valid @RequestBody UpdateMessageRequest request
     ) {
-        return messageService.updateMessage(id, message);
+        return messageService.updateMessage(id, request);
     }
 
     @Operation(

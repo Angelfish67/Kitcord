@@ -4,6 +4,9 @@ import ch.samira.tesan.kitcord.chat.Chat;
 import ch.samira.tesan.kitcord.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
@@ -15,19 +18,24 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
+    @Size(min = 1, max = 2000)
     @Column(nullable = false, length = 2000)
     private String content;
 
+    @NotNull
     @Column(nullable = false)
     private LocalDateTime sentAt;
 
     private LocalDateTime editedAt;
 
     @JsonIgnore
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;

@@ -82,10 +82,10 @@ public class UserController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Data for the new user",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = User.class))
+                    content = @Content(schema = @Schema(implementation = CreateUserRequest.class))
             )
-            @Valid @RequestBody User user
+            @Valid @RequestBody CreateUserRequest request
     ) {
-        return userService.createUser(user);
+        return userService.createUser(request);
     }
 }

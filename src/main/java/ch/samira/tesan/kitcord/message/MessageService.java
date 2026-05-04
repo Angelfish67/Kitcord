@@ -4,9 +4,9 @@ import ch.samira.tesan.kitcord.chat.Chat;
 import ch.samira.tesan.kitcord.chat.ChatRepository;
 import ch.samira.tesan.kitcord.user.User;
 import ch.samira.tesan.kitcord.user.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -35,28 +35,30 @@ public class MessageService {
                 .orElseThrow(() -> new RuntimeException("Message not found"));
     }
 
+    @Transactional
     public Message sendMessage(CreateMessageRequest request) {
         Chat chat = chatRepository.findById(request.getChatId())
                 .orElseThrow(() -> new RuntimeException("Chat not found"));
 
         User sender = userRepository.findById(request.getSenderId())
-                .orElseThrow(() -> new RuntimeException("Sender not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!chat.getUsers().contains(sender)) {
+            throw new RuntimeException("Sender is not a member of this chat");
+        }
 
         Message message = new Message();
         message.setContent(request.getContent());
         message.setChat(chat);
         message.setSender(sender);
-        message.setSentAt(LocalDateTime.now());
-        message.setEditedAt(null);
 
         return messageRepository.save(message);
     }
 
-    public Message updateMessage(Long id, Message updatedMessage) {
+    @Transactional
+    public Message updateMessage(Long id, UpdateMessageRequest request) {
         Message message = getMessageById(id);
-
-        message.setContent(updatedMessage.getContent());
-        message.setEditedAt(LocalDateTime.now());
+        message.setContent(request.getContent());
 
         return messageRepository.save(message);
     }

@@ -1,5 +1,6 @@
 package ch.samira.tesan.kitcord.chat;
 
+import ch.samira.tesan.kitcord.chat.enums.ChatType;
 import ch.samira.tesan.kitcord.user.User;
 import ch.samira.tesan.kitcord.user.UserRepository;
 import jakarta.transaction.Transactional;
@@ -61,17 +62,19 @@ public class ChatService {
         return chatRepository.save(chat);
     }
 
-    public Chat updateChat(Long id, Chat updatedChat) {
+    @Transactional
+    public Chat updateChat(Long id, UpdateChatRequest request) {
         Chat chat = getChatById(id);
 
-        chat.setName(updatedChat.getName());
-        chat.setChatType(updatedChat.getChatType());
+        chat.setName(request.getName());
+        chat.setChatType(request.getChatType());
 
         return chatRepository.save(chat);
     }
 
     public void deleteChat(Long id) {
-        chatRepository.deleteById(id);
+        Chat chat = getChatById(id);
+        chatRepository.delete(chat);
     }
 
     @Transactional

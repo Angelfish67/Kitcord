@@ -22,7 +22,11 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("No users found"));
     }
 
-    public User createUser(User user) {
+    public User createUser(CreateUserRequest request) {
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setRole(request.getRole());
+
         return userRepository.save(user);
     }
 }

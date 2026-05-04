@@ -1,10 +1,11 @@
 package ch.samira.tesan.kitcord.chat;
 
+import ch.samira.tesan.kitcord.chat.enums.ChatType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.ArgumentMatchers;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -104,7 +105,7 @@ class ChatControllerTest {
 
     @Test
     void updateChat_shouldUpdateChat() {
-        Chat request = new Chat();
+        UpdateChatRequest request = new UpdateChatRequest();
         request.setName("Updated Chat");
         request.setChatType(ChatType.GROUP);
 
@@ -115,7 +116,10 @@ class ChatControllerTest {
         updatedChat.setCreatedAt(LocalDateTime.now());
         updatedChat.setUsers(Set.of());
 
-        when(chatService.updateChat(ArgumentMatchers.eq(1L), ArgumentMatchers.any(Chat.class))).thenReturn(updatedChat);
+        when(chatService.updateChat(
+                ArgumentMatchers.eq(1L),
+                ArgumentMatchers.any(UpdateChatRequest.class)
+        )).thenReturn(updatedChat);
 
         ChatResponse result = chatController.updateChat(1L, request);
 
@@ -123,7 +127,10 @@ class ChatControllerTest {
         assertEquals("Updated Chat", result.getName());
         assertEquals(ChatType.GROUP, result.getChatType());
 
-        verify(chatService).updateChat(ArgumentMatchers.eq(1L), ArgumentMatchers.any(Chat.class));
+        verify(chatService).updateChat(
+                ArgumentMatchers.eq(1L),
+                ArgumentMatchers.any(UpdateChatRequest.class)
+        );
     }
 
     @Test

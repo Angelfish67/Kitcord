@@ -1,4 +1,4 @@
-package ch.samira.tesan.kitcord.config;
+package ch.samira.tesan.kitcord.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
