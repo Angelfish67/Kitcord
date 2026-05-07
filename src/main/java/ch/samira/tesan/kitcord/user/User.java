@@ -5,7 +5,6 @@ import ch.samira.tesan.kitcord.message.Message;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.HashSet;
@@ -24,11 +23,8 @@ public class User {
     @Column(length = 100, nullable = false, unique = true)
     private String username;
 
-    @NotBlank
-    @Size(min = 6, max = 255)
-    @JsonIgnore
-    @Column(length = 255, nullable = false)
-    private String password;
+    @Column(length = 100, nullable = false, unique = true)
+    private String keycloakId;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "users")
@@ -41,9 +37,9 @@ public class User {
     public User() {
     }
 
-    public User(String username, String password) {
+    public User(String username, String keycloakId) {
         this.username = username;
-        this.password = password;
+        this.keycloakId = keycloakId;
     }
 
     public Long getId() {
@@ -54,8 +50,8 @@ public class User {
         return username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getKeycloakId() {
+        return keycloakId;
     }
 
     public Set<Chat> getChats() {
@@ -74,8 +70,8 @@ public class User {
         this.username = username;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setKeycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
     }
 
     public void setChats(Set<Chat> chats) {

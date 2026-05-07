@@ -1,133 +1,157 @@
 package ch.samira.tesan.kitcord.user;
 
 import ch.samira.tesan.kitcord.user.dto.CreateUserRequest;
+import ch.samira.tesan.kitcord.user.dto.PasswordChangeRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-    @InjectMocks
-    private UserService userService;
-
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private KeycloakAdminService keycloakAdminService;
+
     @InjectMocks
-    private UserController userController;
+    private UserService userService;
+
+    private User user;
+
+    @BeforeEach
+    void setUp() {
+        user = new User();
+        user.setId(1L);
+        user.setUsername("samira");
+        user.setKeycloakId("keycloak-user-id-123");
+    }
 
     @Test
-    void createUser() {
+    void createUserShouldCreateUserInKeycloakAndSaveLocalUser() {
+        CreateUserRequest request = new CreateUserRequest();
+        request.setUsername("samira");
+        request.setPassword("Test123!");
 
-        CreateUserRequest createUserRequest = new CreateUserRequest();
-        createUserRequest.setUsername("Samira");
-        createUserRequest.setPassword("Ab1!aaaaa");
+        when(userRepository.existsByUsername("samira")).thenReturn(false);
+        when(keycloakAdminService.createUser("samira", "Test123!"))
+                .thenReturn("keycloak-user-id-123");
 
-        User savedUser = new User();
-        savedUser.setId(1L);
-        savedUser.setUsername("Samira");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User savedUser = invocation.getArgument(0);
+            savedUser.setId(1L);
+            return savedUser;
+        });
 
-        when(userRepository.save(any(User.class)))
-                .thenAnswer(invocation -> {
-                    User user = invocation.getArgument(0);
-                    user.setId(1L);
-                    return user;
-                });
+        User result = userService.createUser(request);
 
-        User result = userService.createUser(createUserRequest);
-
+        assertNotNull(result);
         assertEquals(1L, result.getId());
-        assertEquals("Samira", result.getUsername());
-        assertTrue(
-                new BCryptPasswordEncoder()
-                        .matches("Ab1!aaaaa", result.getPassword())
-        );
+        assertEquals("samira", result.getUsername());
+        assertEquals("keycloak-user-id-123", result.getKeycloakId());
 
+        verify(userRepository).existsByUsername("samira");
+        verify(keycloakAdminService).createUser("samira", "Test123!");
+        verify(userRepository).save(any(User.class));
     }
 
     @Test
-    void createUserWithTooShortPassword() {
+    void createUserShouldThrowExceptionWhenUsernameAlreadyExists() {
+        CreateUserRequest request = new CreateUserRequest();
+        request.setUsername("samira");
+        request.setPassword("Test123!");
 
-        CreateUserRequest createUserRequest = new CreateUserRequest();
-        createUserRequest.setUsername("Samira");
-        createUserRequest.setPassword("Ab1!");
+        when(userRepository.existsByUsername("samira")).thenReturn(true);
 
-        assertThrows(
+        IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                // () -> userService.checkPassword("Ab1!")
-                () -> userService.createUser(createUserRequest)
+                () -> userService.createUser(request)
         );
 
-        verifyNoInteractions(userRepository);
+        assertEquals("Username already exists", exception.getMessage());
+
+        verify(userRepository).existsByUsername("samira");
+        verify(keycloakAdminService, never()).createUser(anyString(), anyString());
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
-    void createUserWithNoSpecialCharacters() {
+    void createUserShouldThrowExceptionWhenPasswordIsTooShort() {
+        CreateUserRequest request = new CreateUserRequest();
+        request.setUsername("samira");
+        request.setPassword("T1!");
 
-        CreateUserRequest createUserRequest = new CreateUserRequest();
-        createUserRequest.setUsername("Samira");
-        createUserRequest.setPassword("Abbbb333");
-
-        assertThrows(
+        IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> userService.createUser(createUserRequest)
+                () -> userService.createUser(request)
         );
 
-        verifyNoInteractions(userRepository);
+        assertEquals("Password must be at least 8 characters long", exception.getMessage());
+
+        verify(userRepository, never()).existsByUsername(anyString());
+        verify(keycloakAdminService, never()).createUser(anyString(), anyString());
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
-    void createUserWithNoUppercaseLetters() {
+    void getUserByIdShouldReturnUser() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        CreateUserRequest createUserRequest = new CreateUserRequest();
-        createUserRequest.setUsername("Samira");
-        createUserRequest.setPassword("abbbbbbb1!");
+        User result = userService.getUserById(1L);
 
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> userService.createUser(createUserRequest)
-        );
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("samira", result.getUsername());
+        assertEquals("keycloak-user-id-123", result.getKeycloakId());
 
-        verifyNoInteractions(userRepository);
+        verify(userRepository).findById(1L);
     }
 
     @Test
-    void createUserWithNoLowercaseLetters() {
+    void getUserByIdShouldThrowExceptionWhenUserDoesNotExist() {
+        when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-        CreateUserRequest createUserRequest = new CreateUserRequest();
-        createUserRequest.setUsername("Samira");
-        createUserRequest.setPassword("ABBBBBB1!");
-
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> userService.createUser(createUserRequest)
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> userService.getUserById(99L)
         );
 
-        verifyNoInteractions(userRepository);
+        assertEquals("User not found", exception.getMessage());
+
+        verify(userRepository).findById(99L);
     }
 
     @Test
-    void createUserWithNoNumbers() {
+    void deleteUserShouldDeleteUserInKeycloakAndDatabase() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        CreateUserRequest createUserRequest = new CreateUserRequest();
-        createUserRequest.setUsername("Samira");
-        createUserRequest.setPassword("ABBBBBBb!");
+        userService.deleteUser(1L);
 
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> userService.createUser(createUserRequest)
-        );
-
-        verifyNoInteractions(userRepository);
+        verify(userRepository).findById(1L);
+        verify(keycloakAdminService).deleteUser("keycloak-user-id-123");
+        verify(userRepository).delete(user);
     }
 
+    @Test
+    void changePasswordShouldUpdatePasswordInKeycloak() {
+        PasswordChangeRequest request = new PasswordChangeRequest();
+        request.setId(1L);
+        request.setNewPassword("NewTest123!");
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        userService.changePassword(request);
+
+        verify(userRepository).findById(1L);
+        verify(keycloakAdminService).resetPassword("keycloak-user-id-123", "NewTest123!");
+    }
 }

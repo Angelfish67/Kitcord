@@ -10,3 +10,9 @@ spring:
 
 app:
   name: kitcord
+
+keycloak:
+  server-url: http://localhost:8080
+  realm: kitcord
+  admin-client-id: kitcord_backend
+  admin-client-secret: chsuCzGIr50BGxqsBDVyRmUzXATsvaST
