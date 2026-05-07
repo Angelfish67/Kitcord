@@ -1,7 +1,6 @@
 package ch.samira.tesan.kitcord.chat;
 
 import ch.samira.tesan.kitcord.chat.dto.CreateChatRequest;
-import ch.samira.tesan.kitcord.chat.dto.UpdateChatRequest;
 import ch.samira.tesan.kitcord.chat.enums.ChatType;
 import ch.samira.tesan.kitcord.user.User;
 import ch.samira.tesan.kitcord.user.UserRepository;
@@ -14,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,6 +55,7 @@ class ChatServiceTest {
         assertEquals(1, chats.size());
         assertEquals("Test Chat", chats.getFirst().getName());
 
+        // Check ob Service mit Repo kommuniziert
         verify(chatRepository).findAll();
     }
 
