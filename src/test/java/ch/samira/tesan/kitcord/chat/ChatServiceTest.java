@@ -59,8 +59,6 @@ class ChatServiceTest {
         verify(chatRepository).findAll();
     }
 
-
-
     private User createUser(Long id, String username) {
         User user = new User();
         user.setId(id);
