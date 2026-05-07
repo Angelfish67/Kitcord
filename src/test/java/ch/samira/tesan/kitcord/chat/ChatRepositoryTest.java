@@ -17,7 +17,7 @@ class ChatRepositoryTest {
     private ChatRepository chatRepository;
 
     @Test
-    void save_shouldCreateChat() {
+    void saveCreateChat() {
         Chat chat = new Chat();
         chat.setName("General");
         chat.setChatType(ChatType.GROUP);
@@ -31,7 +31,7 @@ class ChatRepositoryTest {
     }
 
     @Test
-    void findById_shouldReturnChat() {
+    void findByIdReturnChat() {
         Chat chat = new Chat();
         chat.setName("General");
         chat.setChatType(ChatType.GROUP);
@@ -48,7 +48,7 @@ class ChatRepositoryTest {
     }
 
     @Test
-    void findAll_shouldReturnAllChats() {
+    void findAllReturnAllChats() {
         Chat chat1 = new Chat();
         chat1.setName("General");
         chat1.setChatType(ChatType.GROUP);
@@ -66,7 +66,7 @@ class ChatRepositoryTest {
     }
 
     @Test
-    void update_shouldUpdateChat() {
+    void updateChat() {
         Chat chat = new Chat();
         chat.setName("Old Name");
         chat.setChatType(ChatType.GROUP);
@@ -85,7 +85,7 @@ class ChatRepositoryTest {
     }
 
     @Test
-    void delete_shouldDeleteChat() {
+    void deleteeleteChat() {
         Chat chat = new Chat();
         chat.setName("General");
         chat.setChatType(ChatType.GROUP);

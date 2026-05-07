@@ -30,7 +30,7 @@ class ChatControllerTest {
     private ChatController chatController;
 
     @Test
-    void getChats_shouldReturnAllChats() {
+    void getChatsReturnAllChats() {
         Chat chat1 = new Chat();
         chat1.setId(1L); // Damit es als long anstatt int gesendet wird
         chat1.setName("General");
@@ -63,7 +63,7 @@ class ChatControllerTest {
     }
 
     @Test
-    void getChatById_shouldReturnChat() {
+    void getChatByIdReturnChat() {
         Chat chat = new Chat();
         chat.setId(1L);
         chat.setName("General");
@@ -83,7 +83,7 @@ class ChatControllerTest {
     }
 
     @Test
-    void createChat_shouldCreateChat() {
+    void createChat() {
         CreateChatRequest request = new CreateChatRequest();
         request.setName("New Group");
         request.setChatType(ChatType.GROUP);
@@ -108,7 +108,7 @@ class ChatControllerTest {
     }
 
     @Test
-    void updateChat_shouldUpdateChat() {
+    void updateChatUpdateChat() {
         UpdateChatRequest request = new UpdateChatRequest();
         request.setName("Updated Chat");
         request.setChatType(ChatType.GROUP);
@@ -138,7 +138,7 @@ class ChatControllerTest {
     }
 
     @Test
-    void deleteChat_shouldDeleteChat() {
+    void deleteChatDeleteChat() {
         doNothing().when(chatService).deleteChat(1L);
 
         assertDoesNotThrow(() -> chatController.deleteChat(1L));
