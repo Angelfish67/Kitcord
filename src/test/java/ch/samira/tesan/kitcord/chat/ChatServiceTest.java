@@ -15,8 +15,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ChatServiceTest {
@@ -53,9 +54,8 @@ class ChatServiceTest {
         List<Chat> chats = chatService.getChats();
 
         assertEquals(1, chats.size());
-        assertEquals("Test Chat", chats.getFirst().getName());
+        assertEquals("Test Chat", chats.get(0).getName());
 
-        // Check ob Service mit Repo kommuniziert
         verify(chatRepository).findAll();
     }
 

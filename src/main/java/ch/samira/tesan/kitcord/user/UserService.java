@@ -22,10 +22,34 @@ public class UserService {
 
     public User createUser(CreateUserRequest request) {
         User user = new User();
+        checkPassword(request.getPassword());
 
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         return userRepository.save(user);
+    }
+
+    public void checkPassword(String password){
+        if (password == null || password.length() < 8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters long");
+        }
+
+        if (!password.matches(".*[!@#$%^&*()_+=\\-{}\\[\\]:;\"'<>,.?/].*")) {
+            throw new IllegalArgumentException("Password must include a special character");
+        }
+
+        if (!password.matches(".*[A-Z].*")) {
+            throw new IllegalArgumentException("Password must uppercase letters");
+        }
+
+        if (!password.matches(".*[a-z].*")) {
+            throw new IllegalArgumentException("Password must lowercase characters");
+        }
+
+        if (!password.matches(".*\\d.*")) {
+            throw new IllegalArgumentException("Password must include a number");
+        }
+
     }
 }
