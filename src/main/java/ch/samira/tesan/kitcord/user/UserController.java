@@ -104,7 +104,6 @@ public class UserController {
       userService.deleteUser(id);
     }
 
-
     @Operation(
             summary = "Change password",
             description = "Change the current password to a new one."
@@ -121,20 +120,12 @@ public class UserController {
     @PutMapping("/change_password")
     public void changePassword(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Data for the new user",
+                    description = "Data for the password change",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = CreateUserRequest.class))
+                    content = @Content(schema = @Schema(implementation = PasswordChangeRequest.class))
             )
             @Valid @RequestBody PasswordChangeRequest passwordChangeRequest
             ) {
         userService.changePassword(passwordChangeRequest);
     }
-
-
-
-
-
-
-
-
 }
