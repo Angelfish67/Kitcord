@@ -32,7 +32,7 @@ class ChatControllerTest {
     @Test
     void getChatsReturnAllChats() {
         Chat chat1 = new Chat();
-        chat1.setId(1L); // Damit es als long anstatt int gesendet wird
+        chat1.setId(1L);
         chat1.setName("General");
         chat1.setChatType(ChatType.GROUP);
         chat1.setCreatedAt(LocalDateTime.now());
