@@ -21,9 +21,9 @@ public class UserService {
     }
 
     public User createUser(CreateUserRequest request) {
-        User user = new User();
         checkPassword(request.getPassword());
 
+        User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
