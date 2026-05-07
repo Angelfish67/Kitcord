@@ -2,6 +2,8 @@ package ch.samira.tesan.kitcord.message;
 
 import ch.samira.tesan.kitcord.chat.Chat;
 import ch.samira.tesan.kitcord.chat.ChatRepository;
+import ch.samira.tesan.kitcord.message.dto.CreateMessageRequest;
+import ch.samira.tesan.kitcord.message.dto.UpdateMessageRequest;
 import ch.samira.tesan.kitcord.user.User;
 import ch.samira.tesan.kitcord.user.UserRepository;
 import jakarta.transaction.Transactional;

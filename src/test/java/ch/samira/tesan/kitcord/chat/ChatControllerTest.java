@@ -1,5 +1,7 @@
 package ch.samira.tesan.kitcord.chat;
 
+import ch.samira.tesan.kitcord.chat.dto.CreateChatRequest;
+import ch.samira.tesan.kitcord.chat.dto.UpdateChatRequest;
 import ch.samira.tesan.kitcord.chat.enums.ChatType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +32,7 @@ class ChatControllerTest {
     @Test
     void getChats_shouldReturnAllChats() {
         Chat chat1 = new Chat();
-        chat1.setId(1L);
+        chat1.setId(1L); // Damit es als long anstatt int gesendet wird
         chat1.setName("General");
         chat1.setChatType(ChatType.GROUP);
         chat1.setCreatedAt(LocalDateTime.now());
@@ -48,9 +50,11 @@ class ChatControllerTest {
         List<ChatResponse> result = chatController.getChats();
 
         assertEquals(2, result.size());
+
         assertEquals(1L, result.get(0).getId());
         assertEquals("General", result.get(0).getName());
         assertEquals(ChatType.GROUP, result.get(0).getChatType());
+
         assertEquals(2L, result.get(1).getId());
         assertEquals("Direct Chat", result.get(1).getName());
         assertEquals(ChatType.DIRECT, result.get(1).getChatType());

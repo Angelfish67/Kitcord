@@ -107,7 +107,7 @@ Der Wert von app.name muss exakt dem Keycloak Client entsprechen.
 
 ### 1. PostgreSQL starten
 
-Die Datenbank kitcord muss existieren.
+Die Datenbank kitcord muss existieren wenn bei 5.3 sich für PostgreSQL entscheidet.
 
 ---
 
@@ -141,6 +141,14 @@ kitcord-realm.json unter Create Realm importieren.
 ```bash
 mvn spring-boot:run
 ```
+
+#### Backend starten mit PostgreSQL
+mvn spring-boot:run "-Dspring-boot.run.profiles=postgres"
+
+
+#### Backend starten mit H2-Console
+mvn spring-boot:run "-Dspring-boot.run.profiles=h2"
+http://localhost:9090/h2-console
 
 ---
 

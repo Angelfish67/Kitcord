@@ -1,5 +1,6 @@
 package ch.samira.tesan.kitcord.user;
 
+import ch.samira.tesan.kitcord.user.dto.CreateUserRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,22 +28,6 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
-    }
-
-    @Operation(
-            summary = "Get current user",
-            description = "Returns the currently authenticated user."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Current user loaded successfully",
-                    content = @Content(schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "401", description = "Not authenticated", content = @Content),
-            @ApiResponse(responseCode = "403", description = "No permission", content = @Content)
-    })
-    @PreAuthorize("hasAnyAuthority('ROLE_read', 'ROLE_admin')")
-    @GetMapping("/me")
-    public User getCurrentUser() {
-        return userService.getCurrentUser();
     }
 
     @Operation(
@@ -76,8 +61,9 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Not authenticated", content = @Content),
             @ApiResponse(responseCode = "403", description = "No permission", content = @Content)
     })
+
     @PreAuthorize("hasAnyAuthority('ROLE_update', 'ROLE_admin')")
-    @PostMapping
+    @PostMapping("/create")
     public User createUser(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Data for the new user",

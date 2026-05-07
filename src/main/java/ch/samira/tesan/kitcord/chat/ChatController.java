@@ -1,5 +1,7 @@
 package ch.samira.tesan.kitcord.chat;
 
+import ch.samira.tesan.kitcord.chat.dto.CreateChatRequest;
+import ch.samira.tesan.kitcord.chat.dto.UpdateChatRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

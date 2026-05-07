@@ -1,7 +1,7 @@
 package ch.samira.tesan.kitcord.chat;
 
 import ch.samira.tesan.kitcord.chat.enums.ChatType;
-import ch.samira.tesan.kitcord.user.UserResponse;
+import ch.samira.tesan.kitcord.user.dto.UserResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;

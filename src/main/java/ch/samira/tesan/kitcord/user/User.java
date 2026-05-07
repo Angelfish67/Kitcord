@@ -2,7 +2,6 @@ package ch.samira.tesan.kitcord.user;
 
 import ch.samira.tesan.kitcord.chat.Chat;
 import ch.samira.tesan.kitcord.message.Message;
-import ch.samira.tesan.kitcord.user.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -25,10 +24,11 @@ public class User {
     @Column(length = 100, nullable = false, unique = true)
     private String username;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    @NotBlank
+    @Size(min = 6, max = 255)
+    @JsonIgnore
+    @Column(length = 255, nullable = false)
+    private String password;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "users")
@@ -41,9 +41,9 @@ public class User {
     public User() {
     }
 
-    public User(String username, Role role) {
+    public User(String username, String password) {
         this.username = username;
-        this.role = role;
+        this.password = password;
     }
 
     public Long getId() {
@@ -54,8 +54,8 @@ public class User {
         return username;
     }
 
-    public Role getRole() {
-        return role;
+    public String getPassword() {
+        return password;
     }
 
     public Set<Chat> getChats() {
@@ -74,8 +74,8 @@ public class User {
         this.username = username;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setChats(Set<Chat> chats) {

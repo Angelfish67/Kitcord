@@ -1,5 +1,7 @@
 package ch.samira.tesan.kitcord.chat;
 
+import ch.samira.tesan.kitcord.chat.dto.CreateChatRequest;
+import ch.samira.tesan.kitcord.chat.dto.UpdateChatRequest;
 import ch.samira.tesan.kitcord.chat.enums.ChatType;
 import ch.samira.tesan.kitcord.user.User;
 import ch.samira.tesan.kitcord.user.UserRepository;
