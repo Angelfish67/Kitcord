@@ -1,6 +1,8 @@
 package ch.samira.tesan.kitcord.user;
 
 import ch.samira.tesan.kitcord.user.dto.CreateUserRequest;
+import ch.samira.tesan.kitcord.user.dto.PasswordChangeRequest;
+import jakarta.validation.Valid;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,6 +52,22 @@ public class UserService {
         if (!password.matches(".*\\d.*")) {
             throw new IllegalArgumentException("Password must include a number");
         }
+    }
 
+    public void deleteUser(Long id){
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        userRepository.delete(user);
+    }
+
+    public void changePassword(@Valid PasswordChangeRequest passwordChangeRequest) {
+        User user = getUserById(passwordChangeRequest.getId());
+        checkPassword(passwordChangeRequest.getNewPassword());
+        String oldPassword = user.getPassword();
+        if (oldPassword.equals(passwordEncoder.encode(passwordChangeRequest.getCurrentPassword()))){
+            user.setPassword(passwordEncoder.encode(passwordChangeRequest.getNewPassword()));
+        } else {
+            throw new RuntimeException("Current Password doesn't match old password");
+        }
     }
 }

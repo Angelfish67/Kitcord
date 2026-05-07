@@ -1,6 +1,8 @@
 package ch.samira.tesan.kitcord.user;
 
+import ch.samira.tesan.kitcord.chat.ChatResponse;
 import ch.samira.tesan.kitcord.user.dto.CreateUserRequest;
+import ch.samira.tesan.kitcord.user.dto.PasswordChangeRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -81,4 +83,58 @@ public class UserController {
                     .body(exception.getMessage());
         }
     }
+
+    @Operation(
+            summary = "Delete user",
+            description = "Delete an existing user from database."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User deleted successfully",
+                    content = @Content(schema = @Schema(implementation = ChatResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Not authenticated", content = @Content),
+            @ApiResponse(responseCode = "403", description = "No permission", content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+    })
+    @PreAuthorize("hasAnyAuthority('ROLE_update', 'ROLE_admin')")
+    @DeleteMapping("/delete/{userId}")
+    public void deleteUser(
+            @Parameter(description = "User ID", example = "1", required = true)
+            @PathVariable Long id
+    ) {
+      userService.deleteUser(id);
+    }
+
+
+    @Operation(
+            summary = "Change password",
+            description = "Change the current password to a new one."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Password changed successfully",
+                    content = @Content(schema = @Schema(implementation = ChatResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Password not correct", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Not authenticated", content = @Content),
+            @ApiResponse(responseCode = "403", description = "No permission", content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+    })
+    @PreAuthorize("hasAnyAuthority('ROLE_update', 'ROLE_admin')")
+    @PutMapping("/change_password")
+    public void changePassword(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Data for the new user",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = CreateUserRequest.class))
+            )
+            @Valid @RequestBody PasswordChangeRequest passwordChangeRequest
+            ) {
+        userService.changePassword(passwordChangeRequest);
+    }
+
+
+
+
+
+
+
+
 }
