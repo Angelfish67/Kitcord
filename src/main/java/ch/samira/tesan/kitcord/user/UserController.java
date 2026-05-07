@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -61,10 +62,9 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Not authenticated", content = @Content),
             @ApiResponse(responseCode = "403", description = "No permission", content = @Content)
     })
-
     @PreAuthorize("hasAnyAuthority('ROLE_update', 'ROLE_admin')")
     @PostMapping("/create")
-    public User createUser(
+    public ResponseEntity<?> createUser(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Data for the new user",
                     required = true,
@@ -72,6 +72,13 @@ public class UserController {
             )
             @Valid @RequestBody CreateUserRequest request
     ) {
-        return userService.createUser(request);
+        try {
+            User user = userService.createUser(request);
+            return ResponseEntity.ok(user);
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(exception.getMessage());
+        }
     }
 }
