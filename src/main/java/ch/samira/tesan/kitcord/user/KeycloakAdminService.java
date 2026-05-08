@@ -1,5 +1,6 @@
 package ch.samira.tesan.kitcord.user;
 
+import ch.samira.tesan.kitcord.user.dto.LoginResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -24,13 +25,68 @@ public class KeycloakAdminService {
     @Value("${keycloak.realm}")
     private String realm;
 
+    @Value("${keycloak.client-id}")
+    private String clientId;
+
     @Value("${keycloak.admin-client-id}")
     private String adminClientId;
 
     @Value("${keycloak.admin-client-secret}")
     private String adminClientSecret;
 
-    public String createUser(String username, String password) {
+    public String createUser(String username, String email, String firstName, String lastName, String password) {
+        String keycloakUserId = createKeycloakUser(username, email, firstName, lastName, password);
+
+        assignRealmRole(keycloakUserId, "ROLE_read");
+        assignRealmRole(keycloakUserId, "ROLE_update");
+
+        return keycloakUserId;
+    }
+
+    public String createAdminUser(String username, String email, String firstName, String lastName, String password) {
+        String keycloakUserId = createKeycloakUser(username, email, firstName, lastName, password);
+
+        assignRealmRole(keycloakUserId, "ROLE_read");
+        assignRealmRole(keycloakUserId, "ROLE_update");
+        assignRealmRole(keycloakUserId, "ROLE_admin");
+
+        return keycloakUserId;
+    }
+
+    public LoginResponse login(String email, String password) {
+        String url = serverUrl + "/realms/" + realm + "/protocol/openid-connect/token";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+        form.add("grant_type", "password");
+        form.add("client_id", clientId);
+        form.add("username", email);
+        form.add("password", password);
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(form, headers);
+
+        try {
+            ResponseEntity<LoginResponse> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    request,
+                    LoginResponse.class
+            );
+
+            if (response.getBody() == null) {
+                throw new RuntimeException("Login failed");
+            }
+
+            return response.getBody();
+
+        } catch (HttpStatusCodeException exception) {
+            throw new IllegalArgumentException("Login failed: " + exception.getResponseBodyAsString());
+        }
+    }
+
+    private String createKeycloakUser(String username, String email, String firstName, String lastName, String password) {
         String accessToken = getAdminAccessToken();
 
         String url = serverUrl + "/admin/realms/" + realm + "/users";
@@ -42,7 +98,12 @@ public class KeycloakAdminService {
 
         Map<String, Object> userBody = new LinkedHashMap<>();
         userBody.put("username", username);
+        userBody.put("email", email);
+        userBody.put("firstName", firstName);
+        userBody.put("lastName", lastName);
         userBody.put("enabled", true);
+        userBody.put("emailVerified", true);
+        userBody.put("requiredActions", List.of());
         userBody.put("credentials", List.of(credential));
 
         HttpHeaders headers = new HttpHeaders();
@@ -69,6 +130,55 @@ public class KeycloakAdminService {
 
         } catch (HttpStatusCodeException exception) {
             throw new IllegalArgumentException("Keycloak error: " + exception.getResponseBodyAsString());
+        }
+    }
+
+    private void assignRealmRole(String keycloakUserId, String roleName) {
+        String accessToken = getAdminAccessToken();
+
+        String roleUrl = serverUrl + "/admin/realms/" + realm + "/roles/" + roleName;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+
+        HttpEntity<Void> roleRequest = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<Map<String, Object>> roleResponse = restTemplate.exchange(
+                    roleUrl,
+                    HttpMethod.GET,
+                    roleRequest,
+                    new ParameterizedTypeReference<>() {
+                    }
+            );
+
+            Map<String, Object> role = roleResponse.getBody();
+
+            if (role == null) {
+                throw new RuntimeException("Keycloak role not found: " + roleName);
+            }
+
+            String mappingUrl = serverUrl
+                    + "/admin/realms/"
+                    + realm
+                    + "/users/"
+                    + keycloakUserId
+                    + "/role-mappings/realm";
+
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<List<Map<String, Object>>> mappingRequest =
+                    new HttpEntity<>(List.of(role), headers);
+
+            restTemplate.exchange(
+                    mappingUrl,
+                    HttpMethod.POST,
+                    mappingRequest,
+                    Void.class
+            );
+
+        } catch (HttpStatusCodeException exception) {
+            throw new IllegalArgumentException("Keycloak role error: " + exception.getResponseBodyAsString());
         }
     }
 

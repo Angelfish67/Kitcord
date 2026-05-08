@@ -23,6 +23,15 @@ public class User {
     @Column(length = 100, nullable = false, unique = true)
     private String username;
 
+    @Column(length = 255, nullable = false, unique = true)
+    private String email;
+
+    @Column(length = 100, nullable = false)
+    private String firstName;
+
+    @Column(length = 100, nullable = false)
+    private String lastName;
+
     @Column(length = 100, nullable = false, unique = true)
     private String keycloakId;
 
@@ -37,8 +46,11 @@ public class User {
     public User() {
     }
 
-    public User(String username, String keycloakId) {
+    public User(String username, String email, String firstName, String lastName, String keycloakId) {
         this.username = username;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.keycloakId = keycloakId;
     }
 
@@ -48,6 +60,18 @@ public class User {
 
     public String getUsername() {
         return username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 
     public String getKeycloakId() {
@@ -68,6 +92,18 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public void setKeycloakId(String keycloakId) {

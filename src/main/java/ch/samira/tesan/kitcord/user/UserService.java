@@ -1,6 +1,8 @@
 package ch.samira.tesan.kitcord.user;
 
 import ch.samira.tesan.kitcord.user.dto.CreateUserRequest;
+import ch.samira.tesan.kitcord.user.dto.LoginRequest;
+import ch.samira.tesan.kitcord.user.dto.LoginResponse;
 import ch.samira.tesan.kitcord.user.dto.PasswordChangeRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -30,16 +32,41 @@ public class UserService {
             throw new IllegalArgumentException("Username already exists");
         }
 
-        String keycloakId = keycloakAdminService.createUser(
-                request.getUsername(),
-                request.getPassword()
-        );
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
 
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setKeycloakId(keycloakId);
+        String keycloakId = null;
 
-        return userRepository.save(user);
+        try {
+            keycloakId = keycloakAdminService.createUser(
+                    request.getUsername(),
+                    request.getEmail(),
+                    request.getFirstName(),
+                    request.getLastName(),
+                    request.getPassword()
+            );
+
+            User user = new User();
+            user.setUsername(request.getUsername());
+            user.setEmail(request.getEmail());
+            user.setFirstName(request.getFirstName());
+            user.setLastName(request.getLastName());
+            user.setKeycloakId(keycloakId);
+
+            return userRepository.save(user);
+
+        } catch (RuntimeException exception) {
+            if (keycloakId != null) {
+                keycloakAdminService.deleteUser(keycloakId);
+            }
+
+            throw exception;
+        }
+    }
+
+    public LoginResponse login(LoginRequest request) {
+        return keycloakAdminService.login(request.getEmail(), request.getPassword());
     }
 
     public void checkPassword(String password) {

@@ -14,5 +14,6 @@ app:
 keycloak:
   server-url: http://localhost:8080
   realm: kitcord
+  client-id: kitcord
   admin-client-id: kitcord_backend
   admin-client-secret: chsuCzGIr50BGxqsBDVyRmUzXATsvaST
