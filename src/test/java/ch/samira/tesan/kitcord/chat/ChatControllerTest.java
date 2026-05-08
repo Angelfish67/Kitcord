@@ -270,7 +270,6 @@ class ChatControllerTest {
 
         assertEquals(400, response.getStatusCode().value());
         assertEquals("User not found", response.getBody());
-
         verify(chatService).removeUserFromChat(1L, 99L);
     }
 }
