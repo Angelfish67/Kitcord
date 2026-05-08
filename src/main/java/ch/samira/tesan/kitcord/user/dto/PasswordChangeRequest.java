@@ -11,9 +11,11 @@ public class PasswordChangeRequest {
     private Long id;
 
     @NotNull
+    @Size(min = 8, max = 100)
     private String currentPassword;
 
     @NotNull
+    @Size(min = 8, max = 100)
     private String newPassword;
 
     public PasswordChangeRequest() {

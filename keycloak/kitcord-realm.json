@@ -49,6 +49,24 @@
   "roles": {
     "realm": [
       {
+        "id": "4b566060-4130-4080-a2ec-ebcd843a393e",
+        "name": "ROLE_read",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "dba3fda4-711c-4719-b65b-8292834c7324",
+        "attributes": {}
+      },
+      {
+        "id": "e1698993-0d00-4b72-a04d-e9a24d5909ef",
+        "name": "ROLE_update",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "dba3fda4-711c-4719-b65b-8292834c7324",
+        "attributes": {}
+      },
+      {
         "id": "5b18cb18-c8f0-42a1-b9fa-b6aadfeb3c38",
         "name": "offline_access",
         "description": "${role_offline-access}",
@@ -83,6 +101,15 @@
             ]
           }
         },
+        "clientRole": false,
+        "containerId": "dba3fda4-711c-4719-b65b-8292834c7324",
+        "attributes": {}
+      },
+      {
+        "id": "e28d80b9-1bb1-4a76-9c83-d651f15b2e7c",
+        "name": "ROLE_admin",
+        "description": "",
+        "composite": false,
         "clientRole": false,
         "containerId": "dba3fda4-711c-4719-b65b-8292834c7324",
         "attributes": {}
@@ -317,6 +344,14 @@
       ],
       "kitcord": [
         {
+          "id": "ca12a682-f124-4270-a268-c5d1e01c7ce8",
+          "name": "uma_protection",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "7b5413b6-455e-4099-bf1a-e178a49fb6c1",
+          "attributes": {}
+        },
+        {
           "id": "d458745e-5198-45c5-8b10-b55d85689039",
           "name": "ROLE_update",
           "description": "",
@@ -341,6 +376,16 @@
           "composite": false,
           "clientRole": true,
           "containerId": "7b5413b6-455e-4099-bf1a-e178a49fb6c1",
+          "attributes": {}
+        }
+      ],
+      "kitcord_backend": [
+        {
+          "id": "a8aec8f2-2ad2-4a75-be7e-ed751f077539",
+          "name": "uma_protection",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "2ead93e6-11cf-471d-9d67-3ab6d5a635b0",
           "attributes": {}
         }
       ],
@@ -487,6 +532,49 @@
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister": false,
   "webAuthnPolicyPasswordlessAcceptableAaguids": [],
   "webAuthnPolicyPasswordlessExtraOrigins": [],
+  "users": [
+    {
+      "id": "801c9f64-1989-44e5-8f60-dc5e6aa61f2b",
+      "username": "service-account-kitcord_backend",
+      "emailVerified": false,
+      "enabled": true,
+      "createdTimestamp": 1778162325335,
+      "totp": false,
+      "serviceAccountClientId": "kitcord_backend",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-kitcord"
+      ],
+      "clientRoles": {
+        "realm-management": [
+          "query-users",
+          "manage-authorization",
+          "view-users",
+          "manage-realm",
+          "manage-users",
+          "manage-clients",
+          "manage-identity-providers",
+          "realm-admin",
+          "manage-events"
+        ],
+        "kitcord_backend": [
+          "uma_protection"
+        ],
+        "kitcord": [
+          "ROLE_admin"
+        ],
+        "account": [
+          "manage-account",
+          "delete-account",
+          "manage-consent",
+          "manage-account-links"
+        ]
+      },
+      "notBefore": 0,
+      "groups": []
+    }
+  ],
   "scopeMappings": [
     {
       "clientScope": "offline_access",
@@ -727,11 +815,15 @@
       "protocol": "openid-connect",
       "attributes": {
         "realm_client": "false",
+        "logout.confirmation.enabled": "false",
         "oidc.ciba.grant.enabled": "false",
+        "client.secret.creation.time": "1778162141",
         "backchannel.logout.session.required": "true",
         "standard.token.exchange.enabled": "false",
         "oauth2.jwt.authorization.grant.enabled": "false",
+        "frontchannel.logout.session.required": "true",
         "oauth2.device.authorization.grant.enabled": "false",
+        "display.on.consent.screen": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "dpop.bound.access.tokens": "false"
       },
@@ -753,6 +845,79 @@
         "organization",
         "microprofile-jwt"
       ]
+    },
+    {
+      "id": "2ead93e6-11cf-471d-9d67-3ab6d5a635b0",
+      "clientId": "kitcord_backend",
+      "name": "",
+      "description": "",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "**********",
+      "redirectUris": [
+        "*"
+      ],
+      "webOrigins": [
+        "*"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": true,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "logout.confirmation.enabled": "false",
+        "client.secret.creation.time": "1778162325",
+        "standard.token.exchange.enabled": "false",
+        "oauth2.jwt.authorization.grant.enabled": "false",
+        "post.logout.redirect.uris": "*",
+        "frontchannel.logout.session.required": "true",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "realm_client": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "backchannel.logout.session.required": "true",
+        "display.on.consent.screen": "false",
+        "dpop.bound.access.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "web-origins",
+        "service_account",
+        "acr",
+        "profile",
+        "roles",
+        "basic",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "organization",
+        "microprofile-jwt"
+      ],
+      "authorizationSettings": {
+        "allowRemoteResourceManagement": true,
+        "policyEnforcementMode": "ENFORCING",
+        "resources": [],
+        "policies": [],
+        "scopes": [],
+        "decisionStrategy": "UNANIMOUS"
+      }
     },
     {
       "id": "1d8b1975-3a97-45b9-bb8e-e2e0cbc0ee5a",
@@ -2591,13 +2756,18 @@
   "firstBrokerLoginFlow": "first broker login",
   "attributes": {
     "cibaBackchannelTokenDeliveryMode": "poll",
-    "cibaExpiresIn": "120",
     "cibaAuthRequestedUserHint": "login_hint",
-    "oauth2DeviceCodeLifespan": "600",
     "oauth2DevicePollingInterval": "5",
-    "parRequestUriLifespan": "60",
+    "clientOfflineSessionMaxLifespan": "0",
+    "clientSessionIdleTimeout": "0",
+    "clientOfflineSessionIdleTimeout": "0",
     "cibaInterval": "5",
-    "realmReusableOtpCode": "false"
+    "realmReusableOtpCode": "false",
+    "cibaExpiresIn": "120",
+    "oauth2DeviceCodeLifespan": "600",
+    "parRequestUriLifespan": "60",
+    "clientSessionMaxLifespan": "0",
+    "scimApiEnabled": "false"
   },
   "keycloakVersion": "26.6.0",
   "userManagedAccessAllowed": false,
