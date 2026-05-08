@@ -26,6 +26,7 @@ public class CreateUserRequest {
     @NotBlank
     private String lastName;
 
+    @Schema(example = "Test123!")
     @NotNull
     private String password;
 

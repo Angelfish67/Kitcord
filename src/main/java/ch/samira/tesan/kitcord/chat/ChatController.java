@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -45,11 +46,13 @@ public class ChatController {
     })
     @PreAuthorize("hasAnyAuthority('ROLE_read', 'ROLE_admin')")
     @GetMapping
-    public List<ChatResponse> getChats() {
-        return chatService.getChats()
+    public ResponseEntity<List<ChatResponse>> getChats() {
+        List<ChatResponse> chats = chatService.getChats()
                 .stream()
                 .map(ChatResponse::new)
                 .toList();
+
+        return ResponseEntity.ok(chats);
     }
 
     @Operation(
@@ -59,17 +62,24 @@ public class ChatController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Chat found",
                     content = @Content(schema = @Schema(implementation = ChatResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid chat ID", content = @Content),
             @ApiResponse(responseCode = "401", description = "Not authenticated", content = @Content),
             @ApiResponse(responseCode = "403", description = "No permission", content = @Content),
             @ApiResponse(responseCode = "404", description = "Chat not found", content = @Content)
     })
     @PreAuthorize("hasAnyAuthority('ROLE_read', 'ROLE_admin')")
     @GetMapping("/{id}")
-    public ChatResponse getChatById(
+    public ResponseEntity<?> getChatById(
             @Parameter(description = "Chat ID", example = "1", required = true)
             @PathVariable Long id
     ) {
-        return new ChatResponse(chatService.getChatById(id));
+        try {
+            return ResponseEntity.ok(new ChatResponse(chatService.getChatById(id)));
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(exception.getMessage());
+        }
     }
 
     @Operation(
@@ -85,7 +95,7 @@ public class ChatController {
     })
     @PreAuthorize("hasAnyAuthority('ROLE_update', 'ROLE_admin')")
     @PostMapping
-    public ChatResponse createChat(
+    public ResponseEntity<?> createChat(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Data for the new chat",
                     required = true,
@@ -93,7 +103,13 @@ public class ChatController {
             )
             @Valid @RequestBody CreateChatRequest request
     ) {
-        return new ChatResponse(chatService.createChat(request));
+        try {
+            return ResponseEntity.ok(new ChatResponse(chatService.createChat(request)));
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(exception.getMessage());
+        }
     }
 
     @Operation(
@@ -110,7 +126,7 @@ public class ChatController {
     })
     @PreAuthorize("hasAnyAuthority('ROLE_update', 'ROLE_admin')")
     @PutMapping("/{id}")
-    public ChatResponse updateChat(
+    public ResponseEntity<?> updateChat(
             @Parameter(description = "Chat ID", example = "1", required = true)
             @PathVariable Long id,
 
@@ -121,7 +137,13 @@ public class ChatController {
             )
             @Valid @RequestBody UpdateChatRequest request
     ) {
-        return new ChatResponse(chatService.updateChat(id, request));
+        try {
+            return ResponseEntity.ok(new ChatResponse(chatService.updateChat(id, request)));
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(exception.getMessage());
+        }
     }
 
     @Operation(
@@ -130,17 +152,25 @@ public class ChatController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Chat deleted successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid chat ID", content = @Content),
             @ApiResponse(responseCode = "401", description = "Not authenticated", content = @Content),
             @ApiResponse(responseCode = "403", description = "No permission", content = @Content),
             @ApiResponse(responseCode = "404", description = "Chat not found", content = @Content)
     })
     @PreAuthorize("hasAuthority('ROLE_admin')")
     @DeleteMapping("/{id}")
-    public void deleteChat(
+    public ResponseEntity<?> deleteChat(
             @Parameter(description = "Chat ID", example = "1", required = true)
             @PathVariable Long id
     ) {
-        chatService.deleteChat(id);
+        try {
+            chatService.deleteChat(id);
+            return ResponseEntity.ok("Chat deleted successfully");
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(exception.getMessage());
+        }
     }
 
     @Operation(
@@ -150,20 +180,27 @@ public class ChatController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User added to chat successfully",
                     content = @Content(schema = @Schema(implementation = ChatResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid chat or user ID", content = @Content),
             @ApiResponse(responseCode = "401", description = "Not authenticated", content = @Content),
             @ApiResponse(responseCode = "403", description = "No permission", content = @Content),
             @ApiResponse(responseCode = "404", description = "Chat or user not found", content = @Content)
     })
     @PreAuthorize("hasAnyAuthority('ROLE_update', 'ROLE_admin')")
     @PostMapping("/{id}/users/{userId}")
-    public ChatResponse addUserToChat(
+    public ResponseEntity<?> addUserToChat(
             @Parameter(description = "Chat ID", example = "1", required = true)
             @PathVariable Long id,
 
             @Parameter(description = "User ID", example = "2", required = true)
             @PathVariable Long userId
     ) {
-        return new ChatResponse(chatService.addUserToChat(id, userId));
+        try {
+            return ResponseEntity.ok(new ChatResponse(chatService.addUserToChat(id, userId)));
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(exception.getMessage());
+        }
     }
 
     @Operation(
@@ -173,19 +210,26 @@ public class ChatController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User removed from chat successfully",
                     content = @Content(schema = @Schema(implementation = ChatResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid chat or user ID", content = @Content),
             @ApiResponse(responseCode = "401", description = "Not authenticated", content = @Content),
             @ApiResponse(responseCode = "403", description = "No permission", content = @Content),
             @ApiResponse(responseCode = "404", description = "Chat or user not found", content = @Content)
     })
     @PreAuthorize("hasAnyAuthority('ROLE_update', 'ROLE_admin')")
     @DeleteMapping("/{id}/users/{userId}")
-    public ChatResponse removeUserFromChat(
+    public ResponseEntity<?> removeUserFromChat(
             @Parameter(description = "Chat ID", example = "1", required = true)
             @PathVariable Long id,
 
             @Parameter(description = "User ID", example = "2", required = true)
             @PathVariable Long userId
     ) {
-        return new ChatResponse(chatService.removeUserFromChat(id, userId));
+        try {
+            return ResponseEntity.ok(new ChatResponse(chatService.removeUserFromChat(id, userId)));
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(exception.getMessage());
+        }
     }
 }
